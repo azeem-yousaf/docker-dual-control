@@ -59,4 +59,4 @@ The pieces, all in Core:
 
 ## Design docs
 
-`docs/superpowers/specs/` and `docs/superpowers/plans/` hold the original design and implementation plan, including rationale for rejected approaches (Docker.DotNet, engine-switching UI) and the out-of-scope list (compose, networks, exec, stats).
+`docs/superpowers/specs/` and `docs/superpowers/plans/` hold the original design and implementation plan, including rationale for rejected approaches (Docker.DotNet, engine-switching UI) and the out-of-scope list (compose, networks, stats).

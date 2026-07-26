@@ -24,6 +24,9 @@ the engine it lives on.
   environment variables, volumes, and command override.
 - **Images.** List across engines, pull to a chosen engine, run, delete.
 - **Live logs.** Streaming `docker logs -f` in a follow-along window.
+- **Shell into containers.** A Terminal button on every running container opens an
+  interactive shell (`docker exec -it`) in a console window — bash/sh in Linux
+  containers, cmd in Windows containers — on either engine.
 - **Live engine status.** Every engine is re-probed alongside the 3-second refresh, so
   the status chips track engines coming online or going offline in real time.
 - **Start engines in-app.** An engine that is installed but not running gets a Start
