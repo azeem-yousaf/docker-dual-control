@@ -151,7 +151,7 @@
                     </DataGridTemplateColumn.CellTemplate>
                 </DataGridTemplateColumn>
 
-                <DataGridTemplateColumn Header="Actions" Width="210">
+                <DataGridTemplateColumn Header="Actions" Width="250">
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate DataType="{x:Type vm:ContainerRowViewModel}">
                             <StackPanel Orientation="Horizontal" VerticalAlignment="Center"
@@ -171,6 +171,10 @@
                                 <ui:Button Appearance="Transparent" Padding="6" ToolTip="Logs" AutomationProperties.Name="Logs"
                                            Icon="{ui:SymbolIcon DocumentText24}"
                                            Command="{Binding OpenLogsCommand}" />
+                                <ui:Button Appearance="Transparent" Padding="6" ToolTip="Terminal" AutomationProperties.Name="Terminal"
+                                           Icon="{ui:SymbolIcon WindowConsole20}"
+                                           Command="{Binding OpenShellCommand}"
+                                           Visibility="{Binding IsRunning, Converter={StaticResource BoolToVis}}" />
                                 <ui:Button Appearance="Transparent" Padding="6" ToolTip="Delete" AutomationProperties.Name="Delete"
                                            Icon="{ui:SymbolIcon Delete24}"
                                            Command="{Binding RemoveCommand}" />

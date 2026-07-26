@@ -61,6 +61,19 @@ public partial class ContainerRowViewModel : ObservableObject
     [RelayCommand]
     private void OpenLogs() => DialogService.ShowLogsWindow(_engine.Service, Id, Names);
 
+    [RelayCommand]
+    private void OpenShell()
+    {
+        try
+        {
+            _engine.Service.StartShellProcess(Id, _engine.ServerOs);
+        }
+        catch (Exception ex) when (ex is DockerCliException or System.ComponentModel.Win32Exception)
+        {
+            _parent.ReportError($"{_engine.DisplayName}: {ex.Message}");
+        }
+    }
+
     private async Task ExecuteAsync(Func<DockerService, Task> action)
     {
         _parent.SetBusy(RowKey, true);
