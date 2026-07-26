@@ -1,0 +1,9 @@
+<Solution>
+  <Folder Name="/src/">
+    <Project Path="src/DockerDualControl.App/DockerDualControl.App.csproj" />
+    <Project Path="src/DockerDualControl.Core/DockerDualControl.Core.csproj" />
+  </Folder>
+  <Folder Name="/tests/">
+    <Project Path="tests/DockerDualControl.Tests/DockerDualControl.Tests.csproj" />
+  </Folder>
+</Solution>
