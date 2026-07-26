@@ -96,6 +96,33 @@ public sealed class DockerService
         return process;
     }
 
+    /// <summary>Docker args for an interactive shell: bash-or-sh on Linux, cmd on Windows containers.</summary>
+    public static IReadOnlyList<string> BuildShellArgs(string id, string? serverOs) =>
+        serverOs == "windows"
+            ? new[] { "exec", "-it", id, "cmd" }
+            : new[] { "exec", "-it", id, "sh", "-c",
+                "if command -v bash >/dev/null 2>&1; then exec bash; else exec sh; fi" };
+
+    /// <summary>
+    /// Opens an interactive shell in the container in its own console window.
+    /// UseShellExecute makes Windows allocate a real console for the CLI, which
+    /// is what gives `docker exec -it` a working TTY; the window's lifetime
+    /// belongs to the user, not the app.
+    /// </summary>
+    public Process StartShellProcess(string id, string? serverOs)
+    {
+        var (fileName, args) = Engine.BuildCommand(BuildShellArgs(id, serverOs));
+        var startInfo = new ProcessStartInfo
+        {
+            FileName = fileName,
+            UseShellExecute = true,
+        };
+        foreach (var arg in args)
+            startInfo.ArgumentList.Add(arg);
+        return Process.Start(startInfo)
+            ?? throw new DockerCliException("Could not open a terminal window for the container shell.");
+    }
+
     private async Task<ProcessResult> RunAsync(IReadOnlyList<string> dockerArgs, TimeSpan timeout, CancellationToken ct)
     {
         var (fileName, args) = Engine.BuildCommand(dockerArgs);
