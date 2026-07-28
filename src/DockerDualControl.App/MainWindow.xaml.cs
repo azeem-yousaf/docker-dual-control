@@ -72,7 +72,7 @@ public partial class MainWindow : Wpf.Ui.Controls.FluentWindow
         _trayIcon.ShowFirstHideHint();
     }
 
-    private void RestoreFromTray()
+    internal void RestoreFromTray()
     {
         Show();
         if (WindowState == WindowState.Minimized)

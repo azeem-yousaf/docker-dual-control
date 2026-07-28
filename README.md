@@ -37,6 +37,7 @@ the engine it lives on.
   pre-starting Docker Desktop's privileged helper service when needed.
 - **Runs in the system tray.** Closing the window hides the app to the tray, where it
   keeps watching every engine; double-click the tray icon to reopen, Exit to quit.
+  Single instance: launching the exe again just brings the running app's window back.
 - **Start/stop notifications.** While minimised or in the tray, the app sends a
   notification whenever a container starts or stops on any engine.
 
