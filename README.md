@@ -35,6 +35,10 @@ the engine it lives on.
 - **Container mode switching.** The Windows engine chip shows whether it is serving
   Linux or Windows containers and can switch between them (`docker desktop engine use`),
   pre-starting Docker Desktop's privileged helper service when needed.
+- **Runs in the system tray.** Closing the window hides the app to the tray, where it
+  keeps watching every engine; double-click the tray icon to reopen, Exit to quit.
+- **Start/stop notifications.** While minimised or in the tray, the app sends a
+  notification whenever a container starts or stops on any engine.
 
 ## How it works
 

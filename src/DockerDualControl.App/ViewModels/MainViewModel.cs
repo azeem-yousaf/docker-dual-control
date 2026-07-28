@@ -65,7 +65,14 @@ public partial class MainViewModel : ObservableObject
         // track engines coming online/offline, not just container state.
         var statusProbe = RefreshEngineStatusAsync();
         if (!NoEnginesAvailable)
-            await ReloadActiveTabAsync(clear: false, silent: true);
+        {
+            // Containers refresh every tick regardless of the active tab (or the
+            // window being hidden in the tray): the start/stop notifications need
+            // a continuous stream of snapshots to diff.
+            await Containers.RefreshAsync(clear: false, silent: true);
+            if (SelectedTabIndex != 0)
+                await ReloadActiveTabAsync(clear: false, silent: true);
+        }
         await statusProbe;
     }
 

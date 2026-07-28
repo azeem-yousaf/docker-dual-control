@@ -22,7 +22,7 @@ public partial class App : Application
         };
     }
 
-    private static void Log(Exception ex)
+    internal static void Log(Exception ex)
     {
         try
         {

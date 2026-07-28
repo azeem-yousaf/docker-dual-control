@@ -53,7 +53,8 @@ The pieces, all in Core:
 ### App layer conventions
 
 - **Unified across engines — no engine switcher.** This is the app's core principle: showing one engine at a time reproduces the Docker Desktop limitation the app exists to fix. Container/image rows from all reachable engines merge into one list, each row tagged with its engine (blue = Windows, orange = WSL).
-- `MainViewModel` owns the engine list and the `Containers`/`Images` child ViewModels. A 3-second auto-refresh tick reloads the active tab **and** re-pings every engine so status chips track engines coming online/offline. Start-engine and mode-switch commands poll `PingAsync` for up to 90s because the CLI returning doesn't mean the daemon is ready.
+- `MainViewModel` owns the engine list and the `Containers`/`Images` child ViewModels. A 3-second auto-refresh tick reloads containers on **every** tick (plus the Images tab when active) and re-pings every engine so status chips track engines coming online/offline. Containers refresh unconditionally because `ContainerStateTracker` (Core) diffs successive snapshots into start/stop events for tray notifications — even while the window is hidden. Start-engine and mode-switch commands poll `PingAsync` for up to 90s because the CLI returning doesn't mean the daemon is ready.
+- **Close hides to the tray; Exit lives in the tray menu.** `TrayIcon` (WinForms `NotifyIcon`; the App project sets `UseWindowsForms` for this alone, with WinForms implicit usings removed to avoid `Brush` ambiguity) shows balloon notifications for container start/stop, only when the window is minimised or hidden. Tray setup failure degrades gracefully: close exits as before.
 - **Per-engine failures are partial**: if one engine errors, the others still list; the error names the failing engine. Failed docker commands surface stderr in an in-app infobar — never fail silently.
 - Unhandled exceptions are logged to `%TEMP%\DockerDualControl.error.log` (see `App.xaml.cs`).
 

@@ -10,10 +10,15 @@ public partial class ContainersViewModel : ObservableObject
 {
     private readonly MainViewModel _main;
     private readonly HashSet<string> _busyKeys = new();
+    private readonly ContainerStateTracker _stateTracker = new();
     private bool _refreshInProgress;
     private string _fingerprint = "";
 
     public ObservableCollection<ContainerRowViewModel> Rows { get; } = new();
+
+    /// <summary>Raised after a refresh when containers started or stopped since the
+    /// previous successful listing; feeds the tray notifications.</summary>
+    public event Action<IReadOnlyList<ContainerStateChange>>? StateChangesDetected;
 
     [ObservableProperty]
     private string _searchText = "";
@@ -71,6 +76,15 @@ public partial class ContainersViewModel : ObservableObject
                         return (engine, containers: new List<ContainerInfo>(), error: ex.Message);
                     }
                 }));
+
+                // Only successful listings feed the tracker: an engine that failed
+                // this tick must not read as "all its containers stopped".
+                var stateChanges = results
+                    .Where(r => r.error is null)
+                    .SelectMany(r => _stateTracker.Update(r.engine.Engine.Id, r.containers))
+                    .ToList();
+                if (stateChanges.Count > 0)
+                    StateChangesDetected?.Invoke(stateChanges);
 
                 var errors = results
                     .Where(r => r.error is not null)
