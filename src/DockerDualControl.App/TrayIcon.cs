@@ -34,6 +34,11 @@ public sealed class TrayIcon : IDisposable
         _notifyIcon.BalloonTipClicked += (_, _) => OpenRequested?.Invoke();
     }
 
+    /// <summary>Refreshes the hover tooltip with current container counts. The
+    /// formatter guarantees the 127-char NotifyIcon.Text limit.</summary>
+    public void UpdateStatus(IReadOnlyList<EngineContainerSummary> engines) =>
+        _notifyIcon.Text = TrayStatusFormatter.Format(engines);
+
     /// <summary>Shown once, the first time a close is turned into a hide, so the
     /// changed close behavior is never a surprise.</summary>
     public void ShowFirstHideHint()

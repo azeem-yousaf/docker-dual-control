@@ -20,6 +20,10 @@ public partial class ContainersViewModel : ObservableObject
     /// previous successful listing; feeds the tray notifications.</summary>
     public event Action<IReadOnlyList<ContainerStateChange>>? StateChangesDetected;
 
+    /// <summary>Raised after every refresh with per-engine container counts (successful
+    /// listings only); feeds the tray icon's hover tooltip.</summary>
+    public event Action<IReadOnlyList<EngineContainerSummary>>? SummaryUpdated;
+
     [ObservableProperty]
     private string _searchText = "";
 
@@ -57,6 +61,7 @@ public partial class ContainersViewModel : ObservableObject
                 Rows.Clear();
                 _fingerprint = "";
                 IsEmpty = false;
+                SummaryUpdated?.Invoke(Array.Empty<EngineContainerSummary>());
                 return;
             }
 
@@ -85,6 +90,14 @@ public partial class ContainersViewModel : ObservableObject
                     .ToList();
                 if (stateChanges.Count > 0)
                     StateChangesDetected?.Invoke(stateChanges);
+
+                SummaryUpdated?.Invoke(results
+                    .Where(r => r.error is null)
+                    .Select(r => new EngineContainerSummary(
+                        r.engine.ShortName,
+                        r.containers.Count(c => c.IsRunning),
+                        r.containers.Count(c => !c.IsRunning)))
+                    .ToList());
 
                 var errors = results
                     .Where(r => r.error is not null)

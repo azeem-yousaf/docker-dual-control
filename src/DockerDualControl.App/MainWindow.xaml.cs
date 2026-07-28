@@ -59,6 +59,7 @@ public partial class MainWindow : Wpf.Ui.Controls.FluentWindow
             Application.Current.Shutdown();
         };
         _viewModel.Containers.StateChangesDetected += OnContainerStateChanges;
+        _viewModel.Containers.SummaryUpdated += summaries => _trayIcon?.UpdateStatus(summaries);
     }
 
     /// <summary>Close hides to the tray so the app keeps watching the engines;
