@@ -7,6 +7,9 @@ namespace DockerDualControl.App.ViewModels;
 
 public partial class MainViewModel : ObservableObject
 {
+    /// <summary>How long a started engine gets to answer pings; a Docker Desktop cold start can take minutes.</summary>
+    private static readonly TimeSpan EngineStartDeadline = TimeSpan.FromSeconds(180);
+
     public ObservableCollection<EngineItemViewModel> Engines { get; } = new();
 
     public ContainersViewModel Containers { get; }
@@ -122,9 +125,9 @@ public partial class MainViewModel : ObservableObject
         {
             await EngineControl.StartEngineAsync(engine.Engine);
 
-            // The start command returning does not mean the daemon is ready
-            // (Docker Desktop in particular takes a while); poll until it answers.
-            var deadline = DateTime.UtcNow + TimeSpan.FromSeconds(90);
+            // The start command returning does not mean the daemon is ready — the launch
+            // is fire-and-forget, and a Docker Desktop cold start can take minutes.
+            var deadline = DateTime.UtcNow + EngineStartDeadline;
             while (DateTime.UtcNow < deadline)
             {
                 var ping = await engine.Service.PingAsync();
@@ -141,7 +144,7 @@ public partial class MainViewModel : ObservableObject
                 }
                 await Task.Delay(TimeSpan.FromSeconds(2));
             }
-            ReportEngineError(engine, "engine did not come online within 90 seconds.");
+            ReportEngineError(engine, $"engine did not come online within {EngineStartDeadline.TotalSeconds:0} seconds.");
         }
         catch (Exception ex) when (ex is DockerCliException or TimeoutException)
         {
